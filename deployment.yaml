@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glace
+  labels:
+    app: glace
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: glace
+  template:
+    metadata:
+      labels:
+        app: glace
+    spec:
+      containers:
+        - name: container-glace
+          image: wilses10/glace:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          env:
+            - name: NODE_ENV
+              value: "production"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: glace-service
+  labels:
+    app: glace
+spec:
+  type: LoadBalancer
+  selector:
+    app: glace
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: glace-hpa
+  labels:
+    app: glace
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: glace
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
