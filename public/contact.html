@@ -93,11 +93,11 @@
 			};
 
 			try {
-				const response = await fetch('/contact', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(formData)
-				});
+				const response = await fetch('http://a035de398fce84976bcb552595a7191c-2130307030.us-east-1.elb.amazonaws.com/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData)
+});
 
 				if (response.ok) {
 					document.getElementById('responseMessage').style.display = 'block';
